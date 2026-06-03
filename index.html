@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Estado de Estudios</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background:linear-gradient(160deg,#0a4d8c 0%,#0f75bc 45%,#eef5fb 45%);
+    min-height:100vh;
+    padding:20px;
+    color:#1f2937;
+}
+
+.app{
+    max-width:430px;
+    margin:auto;
+}
+
+.logo{
+    color:white;
+    text-align:center;
+    margin:20px 0 25px;
+}
+
+.logo h1{
+    margin:0;
+    font-size:26px;
+}
+
+.logo p{
+    margin:8px 0 0;
+    opacity:.9;
+    font-size:15px;
+}
+
+.card{
+    background:white;
+    border-radius:24px;
+    padding:24px;
+    box-shadow:0 18px 45px rgba(0,0,0,.18);
+}
+
+.label{
+    font-size:14px;
+    color:#6b7280;
+    margin-bottom:8px;
+}
+
+input{
+    width:100%;
+    padding:16px;
+    font-size:20px;
+    border-radius:16px;
+    border:1px solid #d1d5db;
+    outline:none;
+}
+
+input:focus{
+    border-color:#0f75bc;
+    box-shadow:0 0 0 4px rgba(15,117,188,.12);
+}
+
+button{
+    width:100%;
+    border:0;
+    margin-top:18px;
+    padding:16px;
+    border-radius:16px;
+    background:#0a4d8c;
+    color:white;
+    font-size:18px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+button:active{
+    transform:scale(.98);
+}
+
+.hidden{
+    display:none;
+}
+
+.patient-card{
+    background:#f8fafc;
+    border-radius:18px;
+    padding:16px;
+    margin-bottom:18px;
+    border:1px solid #e5e7eb;
+}
+
+.patient-row{
+    display:flex;
+    justify-content:space-between;
+    margin:8px 0;
+    font-size:15px;
+}
+
+.patient-row span:first-child{
+    color:#6b7280;
+}
+
+.progress-wrap{
+    margin:20px 0;
+}
+
+.progress-title{
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    margin-bottom:8px;
+    color:#6b7280;
+}
+
+.progress{
+    height:12px;
+    background:#e5e7eb;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    width:0%;
+    height:100%;
+    background:linear-gradient(90deg,#22c55e,#16a34a);
+    transition:width .5s ease;
+}
+
+.study{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:#f9fafb;
+    border:1px solid #e5e7eb;
+    border-radius:18px;
+    padding:15px;
+    margin-bottom:12px;
+    transition:.3s;
+}
+
+.study.done{
+    background:#ecfdf5;
+    border-color:#86efac;
+}
+
+.icon{
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#fff7ed;
+    font-size:21px;
+}
+
+.study.done .icon{
+    background:#dcfce7;
+}
+
+.study-info{
+    flex:1;
+}
+
+.study-name{
+    font-weight:700;
+    font-size:16px;
+}
+
+.study-status{
+    margin-top:4px;
+    font-size:13px;
+    color:#f97316;
+}
+
+.study.done .study-status{
+    color:#16a34a;
+    font-weight:700;
+}
+
+.badge{
+    padding:6px 10px;
+    border-radius:999px;
+    background:#fff7ed;
+    color:#f97316;
+    font-size:12px;
+    font-weight:700;
+}
+
+.study.done .badge{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.final{
+    background:#dcfce7;
+    border:1px solid #86efac;
+    color:#166534;
+    padding:16px;
+    border-radius:18px;
+    text-align:center;
+    font-weight:800;
+    margin-top:18px;
+}
+
+.footer{
+    text-align:center;
+    font-size:12px;
+    color:#6b7280;
+    margin-top:18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="logo">
+        <h1>Estado de Estudios</h1>
+        <p>Consulta rápida para pacientes</p>
+    </div>
+
+    <div id="pantallaIngreso" class="card">
+        <p class="label">Ingrese su DNI</p>
+
+        <input
+            id="dni"
+            type="number"
+            placeholder="Ej: 30111222"
+            inputmode="numeric"
+        />
+
+        <button onclick="consultar()">
+            Consultar estudios
+        </button>
+
+        <div class="footer">
+            Demo de consulta digital de hoja de ruta
+        </div>
+    </div>
+
+    <div id="pantallaEstudios" class="card hidden">
+
+        <div class="patient-card">
+            <div class="patient-row">
+                <span>DNI</span>
+                <strong id="dniMostrado"></strong>
+            </div>
+            <div class="patient-row">
+                <span>Examen</span>
+                <strong>EX-125487</strong>
+            </div>
+            <div class="patient-row">
+                <span>Fecha</span>
+                <strong id="fecha"></strong>
+            </div>
+        </div>
+
+        <div class="progress-wrap">
+            <div class="progress-title">
+                <span>Progreso del circuito</span>
+                <strong id="porcentaje">0%</strong>
+            </div>
+            <div class="progress">
+                <div id="barra" class="progress-bar"></div>
+            </div>
+        </div>
+
+        <div id="listaEstudios"></div>
+
+        <div id="mensajeFinal"></div>
+
+    </div>
+
+</div>
+
+<script>
+const estudios = [
+    { nombre:"Laboratorio", icono:"🧪" },
+    { nombre:"Radiografía", icono:"🩻" },
+    { nombre:"Electrocardiograma", icono:"❤️" },
+    { nombre:"Audiometría", icono:"🎧" },
+    { nombre:"Psicología", icono:"🧠" }
+];
+
+function consultar(){
+    const dni = document.getElementById("dni").value.trim();
+
+    if(dni === ""){
+        alert("Ingrese un DNI");
+        return;
+    }
+
+    document.getElementById("dniMostrado").innerText = dni;
+    document.getElementById("fecha").innerText =
+        new Date().toLocaleDateString("es-AR");
+
+    document.getElementById("pantallaIngreso").classList.add("hidden");
+    document.getElementById("pantallaEstudios").classList.remove("hidden");
+
+    iniciarEstudios();
+}
+
+function iniciarEstudios(){
+    const lista = document.getElementById("listaEstudios");
+    lista.innerHTML = "";
+
+    estudios.forEach((estudio,index)=>{
+        const fila = document.createElement("div");
+        fila.className = "study";
+        fila.id = "estudio" + index;
+
+        fila.innerHTML = `
+            <div class="icon">${estudio.icono}</div>
+            <div class="study-info">
+                <div class="study-name">${estudio.nombre}</div>
+                <div id="textoEstado${index}" class="study-status">
+                    Pendiente de realización
+                </div>
+            </div>
+            <div id="badge${index}" class="badge">
+                Pendiente
+            </div>
+        `;
+
+        lista.appendChild(fila);
+    });
+
+    completarEstudios();
+}
+
+function completarEstudios(){
+    let completados = 0;
+
+    estudios.forEach((item,index)=>{
+        setTimeout(()=>{
+            document.getElementById("estudio" + index).classList.add("done");
+            document.getElementById("textoEstado" + index).innerText =
+                "Estudio completado";
+            document.getElementById("badge" + index).innerText =
+                "Listo";
+
+            completados++;
+
+            const porcentaje = Math.round((completados / estudios.length) * 100);
+
+            document.getElementById("barra").style.width = porcentaje + "%";
+            document.getElementById("porcentaje").innerText = porcentaje + "%";
+
+            if(completados === estudios.length){
+                document.getElementById("mensajeFinal").innerHTML =
+                    `<div class="final">✅ Circuito finalizado. Puede retirarse.</div>`;
+            }
+        }, (index + 1) * 5000);
+    });
+}
+</script>
+
+</body>
+</html>
